@@ -1,13 +1,10 @@
 package com.example.gurtek.weather_api_ralem.di.modules;
 
-import android.content.Context;
-
 import com.example.gurtek.weather_api_ralem.activites.HomeActivity;
 import com.example.gurtek.weather_api_ralem.di.qualifiers.HomeActivityContext;
 import com.example.gurtek.weather_api_ralem.di.scops.HomeActivityScop;
 import com.example.gurtek.weather_api_ralem.interfaces.DataBaseRepo;
 import com.example.gurtek.weather_api_ralem.interfaces.GetweatherView;
-import com.example.gurtek.weather_api_ralem.interfaces.WeatherRepo;
 import com.example.gurtek.weather_api_ralem.repos.DataBaseRepository;
 import com.example.gurtek.weather_api_ralem.presenter.WeatherPresenter;
 import com.example.gurtek.weather_api_ralem.retrofitcalls.WeatherApi;
@@ -46,15 +43,15 @@ public class HomeActivityModule {
 
     @Provides
     @HomeActivityScop
-    WeatherPresenter provideRepository(WeatherApi api,DataBaseRepo dataBaseRepo,GetweatherView getweatherView) {
-        return new WeatherPresenter(getweatherView,api,dataBaseRepo);
+    WeatherPresenter provideRepository(DataBaseRepo dataBaseRepo,GetweatherView getweatherView) {
+        return new WeatherPresenter(getweatherView,dataBaseRepo,false);
     }
 
 
     @Provides
     @HomeActivityScop
-    DataBaseRepo provideDataBaseRepo(){
-        return new DataBaseRepository();
+    DataBaseRepo provideDataBaseRepo(WeatherApi api){
+        return new DataBaseRepository(api);
     }
 
     @Provides

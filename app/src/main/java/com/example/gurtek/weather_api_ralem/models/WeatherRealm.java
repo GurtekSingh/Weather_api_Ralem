@@ -27,6 +27,13 @@ public class WeatherRealm  extends RealmObject{
 
     }
 
+    public void notifyNewData(WeatherLocation response) {
+        tempMax= response.getMain().getTempMax();
+        tempMin= response.getMain().getTempMin();
+        humidity=  response.getMain().getHumidity();
+        cityName=response.getSys().getCountry();
+    }
+
     public int getId() {
         return id;
     }
@@ -66,4 +73,6 @@ public class WeatherRealm  extends RealmObject{
     public void setCityName(String cityName) {
         this.cityName = cityName;
     }
+
+
 }

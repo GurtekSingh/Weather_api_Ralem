@@ -3,6 +3,7 @@ package com.example.gurtek.weather_api_ralem.retrofitcalls;
 
 import android.util.Log;
 
+import com.example.gurtek.weather_api_ralem.models.WeatherLocation;
 import com.example.gurtek.weather_api_ralem.models.WeatherResponse;
 
 import io.reactivex.Observable;
@@ -19,6 +20,15 @@ public interface WeatherApi {
     @GET("forecast?")
     Observable<WeatherResponse> getWeather(
             @Query("id") String id,
+            @Query("appid") String AppId
+
+    );
+
+
+    @GET("weather?")
+    Observable<WeatherLocation> getWeatherbyLocation(
+            @Query("lat") String lat,
+            @Query("lon") String lon,
             @Query("appid") String AppId
 
     );

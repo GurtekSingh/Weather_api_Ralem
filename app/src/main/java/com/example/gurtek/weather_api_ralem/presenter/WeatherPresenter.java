@@ -1,16 +1,17 @@
 package com.example.gurtek.weather_api_ralem.presenter;
 
-import android.util.Log;
-
+import com.example.gurtek.weather_api_ralem.injection.Injection;
 import com.example.gurtek.weather_api_ralem.interfaces.DataBaseRepo;
 import com.example.gurtek.weather_api_ralem.interfaces.GetweatherView;
-import com.example.gurtek.weather_api_ralem.interfaces.WeatherRepo;
+import com.example.gurtek.weather_api_ralem.interfaces.WeatherImp;
+import com.example.gurtek.weather_api_ralem.models.WeatherLocation;
 import com.example.gurtek.weather_api_ralem.models.WeatherRealm;
-import com.example.gurtek.weather_api_ralem.retrofitcalls.WeatherApi;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -18,63 +19,97 @@ import io.reactivex.schedulers.Schedulers;
  * Sachtech Solution
  * gurtekjattx@gmail.com
  */
-public class WeatherPresenter implements WeatherRepo {
+public class WeatherPresenter extends BasePresenter implements WeatherImp {
 
 
     private GetweatherView getweatherView;
-    private WeatherApi api;
+
     private DataBaseRepo repo;
-    String apiKey ="a025c8b007d236dc195a53596f903202";
+
     private Disposable subscribe;
 
 
-    public WeatherPresenter(GetweatherView getweatherView, WeatherApi api, DataBaseRepo repo) {
+    public WeatherPresenter(GetweatherView getweatherView, DataBaseRepo repo,Boolean onTesting) {
+        super(onTesting);
         this.getweatherView = getweatherView;
-
-        this.api = api;
         this.repo = repo;
     }
 
     @Override
     public void getData(Integer idd) {
 
-                Observable<WeatherRealm> map = api.getWeather(String.valueOf(idd), apiKey)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.computation())
-                        .map(weatherResponse -> repo.writeTodataBase(weatherResponse))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .map(id -> repo.readfromDataBase(id))
-                        .onErrorResumeNext(throwable -> {
-                            return Observable.just(repo.readfromDataBase(idd));
-                        });
-
-                // Read any cached results
-                WeatherRealm cachedWeather = repo.readfromDataBase(idd);
-
-                if (cachedWeather != null) {
-                    map.mergeWith(Observable.just(cachedWeather));
-                }
-
-                subscribe = map.subscribe(weatherRealm -> {
-                    try {
-                        getweatherView.onWeatherDataRecive(weatherRealm);
-                    } catch (Exception e) {
-                        getweatherView.onError(e.getMessage());
-                    }
-
-                }, throwable -> {
-                    getweatherView.onError(throwable.getMessage());
+        Observable<WeatherRealm> map = repo.getWeather(String.valueOf(idd))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .map(weatherResponse -> repo.writeTodataBase(weatherResponse))
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(id -> repo.readfromDataBase(id))
+                .onErrorResumeNext(throwable -> {
+                    return Observable.just(repo.readfromDataBase(idd));
                 });
 
+        // Read any cached results
+        WeatherRealm cachedWeather = repo.readfromDataBase(idd);
 
+        if (cachedWeather != null) {
+            map.mergeWith(Observable.just(cachedWeather));
+        }
+
+        subscribe = map.subscribe(weatherRealm -> {
+            try {
+                getweatherView.onWeatherDataRecive(weatherRealm);
+            } catch (Exception e) {
+                getweatherView.onError(e.getMessage());
             }
 
+        }, throwable -> {
+            getweatherView.onError(throwable.getMessage());
+        });
+    }
 
 
-    public void unSubscribe(){
 
-        if(subscribe!=null&&subscribe.isDisposed()) subscribe.dispose();
+    public void getWeatherInfo(String lat, String lon) {
+
+        checkDataInDatabase(lat, lon);
+
+        repo.getWeatherByLocation(lat, lon)
+                .subscribeOn(onIo())
+                .observeOn(onComputation())
+                .map(new Function<WeatherLocation, Integer>() {
+                    @Override
+                    public Integer apply(WeatherLocation weatherResponse) throws Exception {
+                        return repo.writeTodataBase(weatherResponse);
+                    }
+                })
+                .observeOn(onMain())
+                .map(new Function<Integer, WeatherRealm>() {
+                    @Override
+                    public WeatherRealm apply(Integer cityId) throws Exception {
+                        return repo.readfromDataBase(cityId);
+                    }
+                })
+                .subscribe(weatherRealm -> getweatherView.onWeatherDataRecive(weatherRealm)
+                       ,throwable -> getweatherView.onError(throwable.getMessage()));
 
     }
+
+    private void checkDataInDatabase(String lat, String lon) {
+
+        int id = Integer.parseInt((int)(Double.parseDouble(lat)) + "" + (int)(Double.parseDouble(lon)));
+
+        WeatherRealm weatherRealm = repo.readfromDataBase(id);
+        if (weatherRealm != null)
+            getweatherView.onWeatherDataRecive(weatherRealm);
+
+    }
+
+
+    public void unSubscribe() {
+
+        if (subscribe != null && subscribe.isDisposed()) subscribe.dispose();
+
+    }
+
 
 }

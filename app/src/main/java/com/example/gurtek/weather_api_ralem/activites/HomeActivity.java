@@ -48,6 +48,9 @@ public class HomeActivity extends BaseActivity implements GetweatherView {
     @Inject
     WeatherPresenter presenter;
 
+    String LAT="30.719027";
+    String LON="76.706165";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +67,7 @@ public class HomeActivity extends BaseActivity implements GetweatherView {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
 
-            //  presenter.getData(464737);
+              presenter.getData(464737);
 
             Observable.fromArray(464737, 361478, 361827, 360615, 361329)
                     .delay(integer -> Observable.just(integer).delay(20,TimeUnit.SECONDS).skip(1))
@@ -73,6 +76,9 @@ public class HomeActivity extends BaseActivity implements GetweatherView {
 
 
         });
+
+        presenter.getWeatherInfo(LAT,LON);
+
     }
 
     private void initDagger() {

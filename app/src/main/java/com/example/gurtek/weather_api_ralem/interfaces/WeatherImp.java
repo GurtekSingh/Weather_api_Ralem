@@ -5,6 +5,7 @@ package com.example.gurtek.weather_api_ralem.interfaces;
  * Sachtech Solution
  * gurtekjattx@gmail.com
  */
-public interface WeatherRepo   {
+public interface WeatherImp {
    void getData(Integer id);
+  // void getWeatherInfo(String lat,String lon);
 }
