@@ -14,7 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import io.reactivex.Observable;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,6 +65,20 @@ public class WeatherPresenterTest {
         verify(view).onWeatherDataRecive(weatherRealm);
 
     }
+
+    @Test
+    public void shouldHandleException(){
+
+        when(repo.getWeatherByLocation(LAT, LON))
+                .thenReturn(Observable.error(new Throwable("Boom!")));
+
+        presenter.getWeatherInfo(LAT,LON);
+
+        verify(view).onError("Boom!");
+
+    }
+
+
 
 
 
