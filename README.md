@@ -1,3 +1,13 @@
 # Weather_api_Ralem
 
-Rxjava 2 with dagger 2 and Ralem database with MVP pattern
+Weather Demo to get current location Temperature
+
+#### Technology used
+
+ - [TDD development](https://www.agilealliance.org/glossary/tdd/).
+ - [Dagger 2](https://google.github.io/dagger/) helps to write test cases more easily and efficiently
+ - [RXJava 2](https://academy.realm.io/posts/gotocph-jake-wharton-exploring-rxjava2-android/)
+ - [MVP](http://www.tinmegali.com/en/model-view-presenter-android-part-1/) 
+ 
+ 
+ 

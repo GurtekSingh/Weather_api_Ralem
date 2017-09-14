@@ -17,8 +17,6 @@ public class WeatherApp extends Application {
 
     private AppComponent appComponent;
 
-
-
     @Override
     public void onCreate() {
         super.onCreate();

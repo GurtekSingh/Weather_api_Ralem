@@ -13,4 +13,5 @@ public interface GetweatherView extends BaseListener {
    void onWeatherDataRecive(WeatherRealm weatherRealm);
    void onError( String e);
 
+
 }

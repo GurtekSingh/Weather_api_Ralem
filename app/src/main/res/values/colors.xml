@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#1E3642</color>
     <color name="snow_white">#F9F9F9</color>
     <color name="blue_whale">#1E3642</color>
     <color name="blue_malibu">#4FA8ED</color>
     <color name="blue_maya">#6AC6F7</color>
+    <color name="grey">#99a1a5</color>
     <color name="grey_zumthor">#D1D4D5</color>
     <color name="pattern_blue">#D3E4F2</color>
 

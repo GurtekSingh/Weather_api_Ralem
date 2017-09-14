@@ -1,5 +1,8 @@
 package com.example.gurtek.weather_api_ralem.presenter;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -31,6 +34,30 @@ public class BasePresenter {
      Scheduler onMain() {
         if (isTesting) return Schedulers.trampoline();
         else  return AndroidSchedulers.mainThread();
+    }
+
+    <T>ObservableTransformer<T, T> applyNtoMSchedulers() {
+
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.subscribeOn(onIo())
+                        .observeOn(onMain());
+            }
+        };
+
+    }
+
+    <T>ObservableTransformer<T, T> applyNtoCSchedulers() {
+
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.subscribeOn(onIo())
+                        .observeOn(onComputation());
+            }
+        };
+
     }
 
 

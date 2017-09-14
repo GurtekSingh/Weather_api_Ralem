@@ -2,12 +2,15 @@ package com.example.gurtek.weather_api_ralem.repos;
 
 import android.util.Log;
 
-import com.example.gurtek.weather_api_ralem.injection.Injection;
 import com.example.gurtek.weather_api_ralem.interfaces.DataBaseRepo;
+import com.example.gurtek.weather_api_ralem.models.ForecastWeather;
 import com.example.gurtek.weather_api_ralem.models.WeatherLocation;
 import com.example.gurtek.weather_api_ralem.models.WeatherRealm;
 import com.example.gurtek.weather_api_ralem.models.WeatherResponse;
 import com.example.gurtek.weather_api_ralem.retrofitcalls.WeatherApi;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.realm.Realm;
@@ -34,13 +37,13 @@ public class DataBaseRepository implements DataBaseRepo {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(transactionRealm -> {
 
-            Log.e("Threading","Writing to DataBase"+Thread.currentThread().getId());
+            Log.e("Threading", "Writing to DataBase" + Thread.currentThread().getId());
 
             WeatherRealm weatherRealm = DataBaseRepository.this.findInRealm(transactionRealm, response.city.id);
 
             if (weatherRealm == null)
                 weatherRealm = transactionRealm.createObject(WeatherRealm.class, response.city.id);
-                 weatherRealm.notifyNewData(response);
+            weatherRealm.notifyNewData(response);
 
         });
         realm.close();
@@ -50,13 +53,13 @@ public class DataBaseRepository implements DataBaseRepo {
     @Override
     public int writeTodataBase(WeatherLocation response) {
         Realm realm = Realm.getDefaultInstance();
-        int id = Integer.parseInt(((int) response.getCoord().getLat() + "" + (int) response.getCoord().getLon()));
+        int id = 1;
         realm.executeTransaction(transactionRealm -> {
 
-            Log.e("Threading","Writing to DataBase"+Thread.currentThread().getId());
+            Log.e("Threading", "Writing to DataBase" + Thread.currentThread().getId());
 
 
-            WeatherRealm weatherRealm = DataBaseRepository.this.findInRealm(transactionRealm, id);
+            WeatherRealm weatherRealm = DataBaseRepository.this.findInRealm(transactionRealm,id);
 
             if (weatherRealm == null)
                 weatherRealm = transactionRealm.createObject(WeatherRealm.class,id);
@@ -74,19 +77,52 @@ public class DataBaseRepository implements DataBaseRepo {
         return findInRealm(realm, id);
     }
 
+    @Override
+    public WeatherRealm readfromDataBase() {
+        Realm realm = Realm.getDefaultInstance();
+        return findInRealm(realm,1);
+    }
+
 
     public Observable<WeatherResponse> getWeather(String s) {
-        return api.getWeather(s,apiKey);
+        return api.getWeather(s, apiKey);
+    }
+
+    @Override
+    public Observable<WeatherLocation> getWeatherByLocation(double lat, double lon) {
+        return api.getWeatherbyLocation(lat, lon,"metric", apiKey);
     }
 
     @Override
     public Observable<WeatherLocation> getWeatherByLocation(String lat, String lon) {
-        return api.getWeatherbyLocation(lat,lon,apiKey);
+        return getWeatherByLocation(Double.parseDouble(lat), Double.parseDouble(lon));
     }
 
+    @Override
+    public List<WeatherRealm> createRalmList(ForecastWeather weatherresponse) {
+
+        List<WeatherRealm> realmList=new ArrayList<>();
+
+        for (ForecastWeather.List data: weatherresponse.list) {
+            WeatherRealm realm=new WeatherRealm(data);
+            realmList.add(realm);
+        }
+
+        return realmList;
+
+    }
+
+    @Override
+    public List<WeatherRealm> writeTodataBase(ForecastWeather forecastWeather) {
+        return null;
+    }
 
 
     private WeatherRealm findInRealm(Realm realm, int id) {
         return realm.where(WeatherRealm.class).equalTo("id", id).findFirst();
+    }
+
+    private WeatherRealm findInRealm(Realm realm) {
+        return realm.where(WeatherRealm.class).findFirst();
     }
 }

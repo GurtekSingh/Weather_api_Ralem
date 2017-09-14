@@ -1,9 +1,10 @@
 package com.example.gurtek.weather_api_ralem.injection;
 
-import com.example.gurtek.weather_api_ralem.models.Coord;
+import com.example.gurtek.weather_api_ralem.models.ForecastWeather;
 import com.example.gurtek.weather_api_ralem.models.WeatherLocation;
 import com.example.gurtek.weather_api_ralem.models.WeatherRealm;
-import com.example.gurtek.weather_api_ralem.models.WeatherResponse;
+
+import java.util.ArrayList;
 
 /**
  * * Created by Gurtek Singh on 9/9/2017.
@@ -16,6 +17,7 @@ public class Injection {
 
     private static WeatherRealm weatherRealm;
     private static WeatherLocation weatherLocation;
+    private static ForecastWeather forecaseResponse;
 
     public static WeatherRealm provideFakeWeatherRalm() {
         if (weatherRealm == null) {
@@ -29,6 +31,8 @@ public class Injection {
     public static WeatherLocation provideLocationResponse() {
         if (weatherLocation == null) {
             weatherLocation = new WeatherLocation();
+
+            weatherLocation.setId(12);
 
             WeatherLocation.Coord coord = new WeatherLocation.Coord();
             coord.setLat(12);
@@ -51,4 +55,28 @@ public class Injection {
         return weatherLocation;
     }
 
+    public static ForecastWeather provideFakeForeCastResponse() {
+        if (forecaseResponse == null) {
+            forecaseResponse = new ForecastWeather();
+
+
+            ForecastWeather.Main main=new ForecastWeather.Main();
+            main.humidity=50;
+            main.temp=60;
+            main.temp_max=40;
+            main.temp_min=50;
+
+            ForecastWeather.List list=new ForecastWeather.List();
+            list.main=main;
+
+            forecaseResponse.list=new ArrayList<>();
+
+            forecaseResponse.list.add(list);
+
+        }
+
+        return forecaseResponse;
+
+
+    }
 }

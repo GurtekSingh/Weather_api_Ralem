@@ -7,6 +7,9 @@ import com.example.gurtek.weather_api_ralem.interfaces.WeatherImp;
 import com.example.gurtek.weather_api_ralem.models.WeatherLocation;
 import com.example.gurtek.weather_api_ralem.models.WeatherRealm;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -28,8 +31,8 @@ public class WeatherPresenter extends BasePresenter implements WeatherImp {
 
     private Disposable subscribe;
 
-
-    public WeatherPresenter(GetweatherView getweatherView, DataBaseRepo repo,Boolean onTesting) {
+    @Inject
+    public WeatherPresenter(GetweatherView getweatherView, DataBaseRepo repo,@Named("test") Boolean onTesting) {
         super(onTesting);
         this.getweatherView = getweatherView;
         this.repo = repo;

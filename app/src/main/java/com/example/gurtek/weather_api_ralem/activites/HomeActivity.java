@@ -24,10 +24,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subscribers.ResourceSubscriber;
 
 public class HomeActivity extends BaseActivity implements GetweatherView {
 
@@ -115,7 +112,7 @@ public class HomeActivity extends BaseActivity implements GetweatherView {
         tempMin.setText(String.valueOf(weatherRealm.getTempMin()));
         tempMax.setText(String.valueOf(weatherRealm.getTempMax()));
         humidity.setText(String.valueOf(weatherRealm.getHumidity()));
-        cityName.setText(weatherRealm.getCityName());
+
 
     }
 

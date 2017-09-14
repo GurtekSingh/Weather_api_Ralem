@@ -1,8 +1,8 @@
 package com.example.gurtek.weather_api_ralem.di.components;
 
-import com.example.gurtek.weather_api_ralem.activites.HomeActivity;
-import com.example.gurtek.weather_api_ralem.di.modules.HomeActivityModule;
-import com.example.gurtek.weather_api_ralem.di.scops.HomeActivityScop;
+import com.example.gurtek.weather_api_ralem.activites.WeatherDetailActivity;
+import com.example.gurtek.weather_api_ralem.di.modules.WeatherActivityModule;
+import com.example.gurtek.weather_api_ralem.di.scops.WeatherDetailScops;
 
 import dagger.Component;
 
@@ -11,8 +11,9 @@ import dagger.Component;
  * Sachtech Solution
  * gurtekjattx@gmail.com
  */
-@HomeActivityScop
-@Component(modules = {HomeActivityModule.class},dependencies = AppComponent.class)
-public interface HomeActivityComponent {
-    void inject(HomeActivity homeActivity);
+@WeatherDetailScops
+@Component(modules = {WeatherActivityModule.class},dependencies = AppComponent.class)
+public interface WeatherActivityComponent {
+
+    void inject(WeatherDetailActivity weatherDetailActivity);
 }

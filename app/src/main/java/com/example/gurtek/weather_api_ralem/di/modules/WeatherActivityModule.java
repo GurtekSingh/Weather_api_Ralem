@@ -1,17 +1,18 @@
 package com.example.gurtek.weather_api_ralem.di.modules;
 
-import com.example.gurtek.weather_api_ralem.activites.HomeActivity;
-import com.example.gurtek.weather_api_ralem.di.qualifiers.HomeActivityContext;
-import com.example.gurtek.weather_api_ralem.di.scops.HomeActivityScop;
+import com.example.gurtek.weather_api_ralem.activites.WeatherDetailActivity;
+import com.example.gurtek.weather_api_ralem.di.scops.WeatherDetailScops;
 import com.example.gurtek.weather_api_ralem.interfaces.DataBaseRepo;
-import com.example.gurtek.weather_api_ralem.interfaces.GetweatherView;
+import com.example.gurtek.weather_api_ralem.interfaces.weatherDListener.WeatherDetail;
+import com.example.gurtek.weather_api_ralem.presenter.WeatherDetailPresenter;
 import com.example.gurtek.weather_api_ralem.repos.DataBaseRepository;
-import com.example.gurtek.weather_api_ralem.presenter.WeatherPresenter;
+import com.example.gurtek.weather_api_ralem.repos.NetworkDataSource;
 import com.example.gurtek.weather_api_ralem.retrofitcalls.WeatherApi;
+
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
-import io.realm.Realm;
 
 /**
  * Created by Gurtek Singh on 6/13/2017.
@@ -19,45 +20,40 @@ import io.realm.Realm;
  * gurtekjattx@gmail.com
  */
 @Module
-public class HomeActivityModule {
+public class WeatherActivityModule {
 
-    private final HomeActivity activity;
+    private WeatherDetailActivity activity;
 
-    public HomeActivityModule(HomeActivity activity) {
+    public WeatherActivityModule(WeatherDetailActivity activity) {
         this.activity = activity;
     }
 
-
     @Provides
-    @HomeActivityContext
-    @HomeActivityScop
-    HomeActivity provideActivityContext() {
+    @WeatherDetailScops
+    WeatherDetail.WeatherDetailView provideWeatherView(){
         return activity;
     }
 
     @Provides
-    GetweatherView provideWeaterView(@HomeActivityContext HomeActivity context) {
-        return context;
+    @WeatherDetailScops
+    WeatherDetail.NetworkRepository provideRemoteRepo(WeatherApi api){
+        return new NetworkDataSource(api);
     }
 
-
     @Provides
-    @HomeActivityScop
-    WeatherPresenter provideRepository(DataBaseRepo dataBaseRepo,GetweatherView getweatherView) {
-        return new WeatherPresenter(getweatherView,dataBaseRepo,false);
+    @WeatherDetailScops
+    WeatherDetailPresenter provideWeatherPresenter(WeatherDetail.WeatherDetailView view,
+                                             WeatherDetail.NetworkRepository remoteRepo,
+                                             DataBaseRepo localRepo){
+        return new WeatherDetailPresenter(view,remoteRepo,localRepo,false);
     }
 
-
     @Provides
-    @HomeActivityScop
-    DataBaseRepo provideDataBaseRepo(WeatherApi api){
+    @WeatherDetailScops
+    DataBaseRepo provideDataBase(WeatherApi api){
         return new DataBaseRepository(api);
     }
 
-    @Provides
-    @HomeActivityScop()
-    Realm provideRealm(){
-        return Realm.getDefaultInstance();
-    }
+
 
 }

@@ -1,6 +1,5 @@
 package com.example.gurtek.weather_api_ralem.models;
 
-import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -17,21 +16,50 @@ public class WeatherRealm  extends RealmObject{
     double tempMax;
     double tempMin;
     int humidity;
-    String cityName;
+    double currentTemp;
+    private String description;
+    private String state;
+    private String country;
+
+    private long timeStamp;
+
+    /**
+     *
+     * Realm
+     * */
+    public WeatherRealm() {
+    }
+
+    public WeatherRealm(ForecastWeather.List data) {
+
+        id=data.dt;
+        tempMax=data.main.temp_max;
+        tempMin=data.main.temp_min;
+        humidity=data.main.humidity;
+        currentTemp=data.main.temp;
+        timeStamp=data.dt;
+
+    }
+
 
     public void notifyNewData(WeatherResponse response) {
         tempMax= response.list.get(0).main.temp_max;
         tempMin= response.list.get(0).main.temp_min;
         humidity=  response.list.get(0).main.humidity;
-        cityName=response.city.name;
-
+        currentTemp=response.list.get(0).main.temp;
+        description=response.list.get(0).weather.get(0).description;
+        country=response.city.country;
+        state =response.city.name;
     }
 
     public void notifyNewData(WeatherLocation response) {
         tempMax= response.getMain().getTempMax();
         tempMin= response.getMain().getTempMin();
         humidity=  response.getMain().getHumidity();
-        cityName=response.getSys().getCountry();
+        currentTemp=response.getMain().getTemp();
+        description=response.getWeather().get(0).getMain();
+        country=response.getSys().getCountry();
+        state =response.getName();
     }
 
     public int getId() {
@@ -66,13 +94,35 @@ public class WeatherRealm  extends RealmObject{
         this.humidity = humidity;
     }
 
-    public String getCityName() {
-        return cityName;
+    public int getCurrentTemp() {
+        return (int) Math.round(currentTemp);
     }
 
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
+    public void setCurrentTemp(double currentTemp) {
+        this.currentTemp = currentTemp;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 }
